@@ -4,6 +4,9 @@ using PortfolioManagerClient.Models;
 using PortfolioManagerClient.Services;
 using PortfolioManager.Service.Models;
 using PortfolioManager.Service;
+using PortfolioManager.Service.Interfaces;
+using PortfolioManagerClient.Infrastructure;
+using System.Linq;
 
 namespace PortfolioManagerClient.Controllers
 {
@@ -12,7 +15,7 @@ namespace PortfolioManagerClient.Controllers
     /// </summary>
     public class PortfolioItemsController : ApiController
     {
-        private readonly PortfolioItemsService _portfolioItemsService = new PortfolioItemsService(new PortfolioService());
+        private readonly  IService _portfolioItemsService = new PortfolioService();
         private readonly UsersService _usersService = new UsersService();
 
         /// <summary>
@@ -22,7 +25,7 @@ namespace PortfolioManagerClient.Controllers
         public IList<PortfolioItemViewModel> Get()
         {
             var userId = _usersService.GetOrCreateUser();
-            return _portfolioItemsService.GetItems(userId);
+            return _portfolioItemsService.GetAll(userId).Select(m => m.ToViewModel()).ToList();
         }
 
         /// <summary>
@@ -32,7 +35,7 @@ namespace PortfolioManagerClient.Controllers
         public void Put(PortfolioItemViewModel portfolioItem)
         {
             portfolioItem.UserId = _usersService.GetOrCreateUser();
-            _portfolioItemsService.UpdateItem(portfolioItem);
+            _portfolioItemsService.Update(portfolioItem.ToBLLModel());
         }
 
         /// <summary>
@@ -41,7 +44,7 @@ namespace PortfolioManagerClient.Controllers
         /// <param name="id">The portfolio item identifier.</param>
         public void Delete(int id)
         {
-            _portfolioItemsService.DeleteItem(id);
+            _portfolioItemsService.Delete(id);
         }
 
         /// <summary>
@@ -51,7 +54,7 @@ namespace PortfolioManagerClient.Controllers
         public void Post(PortfolioItemViewModel portfolioItem)
         {
             portfolioItem.UserId = _usersService.GetOrCreateUser();
-            _portfolioItemsService.CreateItem(portfolioItem);
+            _portfolioItemsService.Add(portfolioItem.ToBLLModel());
         }
     }
 }
