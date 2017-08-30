@@ -166,7 +166,6 @@
     <Compile Include="Infrastructure\Mapper.cs" />
     <Compile Include="Models\PortfolioItemViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\PortfolioItemsService.cs" />
     <Compile Include="Services\UsersService.cs" />
   </ItemGroup>
   <ItemGroup>
