@@ -9,6 +9,7 @@ using PortfolioManager.Service.Infrastructure;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using Ninject;
 
 namespace PortfolioManager.Service
 {
@@ -41,9 +42,9 @@ namespace PortfolioManager.Service
 
         private readonly HttpClient _httpClient;
         private readonly IStorage storage;
-        public PortfolioService (/*IStorage storage*/)
+        public PortfolioService ()
         {
-            //this.storage = storage;
+            this.storage = new Storage();
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -52,10 +53,9 @@ namespace PortfolioManager.Service
         {
             
             //Add item to local storage
-            //storage.Add(item.ToDALModel());
+            storage.Add(item.ToDALModel());
             //Add Item to CloudService
-            _httpClient.PostAsJsonAsync(_serviceApiUrl + CreateUrl, item)
-                .Result.EnsureSuccessStatusCode();
+            _httpClient.PostAsJsonAsync(_serviceApiUrl + CreateUrl, item);
         }
 
         public void Delete(int id)
@@ -66,8 +66,8 @@ namespace PortfolioManager.Service
         //TODO use storage
         public IEnumerable<PortfolioBllModel> GetAll(int userId)
         {
-            var dataAsString = _httpClient.GetStringAsync(string.Format(_serviceApiUrl + GetAllUrl, userId)).Result;
-            return JsonConvert.DeserializeObject<IEnumerable<PortfolioBllModel>>(dataAsString);
+            var result = storage.GetAll(userId).Select(m => m.ToBLLModel());
+            return result;
         }
 
         public PortfolioBllModel GetById(int id)

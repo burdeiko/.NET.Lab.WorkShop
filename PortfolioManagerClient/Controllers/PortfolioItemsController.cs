@@ -7,6 +7,8 @@ using PortfolioManager.Service;
 using PortfolioManager.Service.Interfaces;
 using PortfolioManagerClient.Infrastructure;
 using System.Linq;
+using Ninject;
+using Ninject.Web.Common;
 
 namespace PortfolioManagerClient.Controllers
 {
@@ -15,7 +17,11 @@ namespace PortfolioManagerClient.Controllers
     /// </summary>
     public class PortfolioItemsController : ApiController
     {
-        private readonly  IService _portfolioItemsService = new PortfolioService();
+        public PortfolioItemsController(IService service)
+        {
+            this._portfolioItemsService = service;
+        }
+        private readonly IService _portfolioItemsService;
         private readonly UsersService _usersService = new UsersService();
 
         /// <summary>
@@ -25,7 +31,8 @@ namespace PortfolioManagerClient.Controllers
         public IList<PortfolioItemViewModel> Get()
         {
             var userId = _usersService.GetOrCreateUser();
-            return _portfolioItemsService.GetAll(userId).Select(m => m.ToViewModel()).ToList();
+            var result = _portfolioItemsService.GetAll(userId).Select(m => m.ToViewModel()).ToList();
+            return result;
         }
 
         /// <summary>
