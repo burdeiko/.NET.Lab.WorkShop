@@ -120,9 +120,9 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LocalStorage\LocalStorage.csproj">
-      <Project>{0a9fdbbc-abb2-42d9-b3e8-ee4b129f9271}</Project>
-      <Name>LocalStorage</Name>
+    <ProjectReference Include="..\PortfolioManager.Service\PortfolioManager.Service.csproj">
+      <Project>{fa37df71-f731-4229-8afd-2bc06296c2e6}</Project>
+      <Name>PortfolioManager.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

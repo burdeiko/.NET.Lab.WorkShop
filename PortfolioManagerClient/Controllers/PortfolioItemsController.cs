@@ -2,6 +2,8 @@
 using System.Web.Http;
 using PortfolioManagerClient.Models;
 using PortfolioManagerClient.Services;
+using PortfolioManager.Service.Models;
+using PortfolioManager.Service;
 
 namespace PortfolioManagerClient.Controllers
 {
@@ -10,7 +12,7 @@ namespace PortfolioManagerClient.Controllers
     /// </summary>
     public class PortfolioItemsController : ApiController
     {
-        private readonly PortfolioItemsService _portfolioItemsService = new PortfolioItemsService();
+        private readonly PortfolioItemsService _portfolioItemsService = new PortfolioItemsService(new PortfolioService());
         private readonly UsersService _usersService = new UsersService();
 
         /// <summary>

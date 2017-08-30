@@ -4,6 +4,11 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using PortfolioManagerClient.Models;
+using PortfolioManager.Service.Models;
+using System.Linq;
+using PortfolioManagerClient.Infrastructure;
+using PortfolioManager.Service.Interfaces;
+using System;
 
 namespace PortfolioManagerClient.Services
 {
@@ -12,40 +17,14 @@ namespace PortfolioManagerClient.Services
     /// </summary>
     public class PortfolioItemsService
     {
-        /// <summary>
-        /// The url for getting all portfolio items.
-        /// </summary>
-        private const string GetAllUrl = "PortfolioItems?userId={0}";
-
-        /// <summary>
-        /// The url for updating a portfolio item.
-        /// </summary>
-        private const string UpdateUrl = "PortfolioItems";
-
-        /// <summary>
-        /// The url for a portfolio item's creation.
-        /// </summary>
-        private const string CreateUrl = "PortfolioItems";
-
-        /// <summary>
-        /// The url for a portfolio item's deletion.
-        /// </summary>
-        private const string DeleteUrl = "PortfolioItems/{0}";
-
-        /// <summary>
-        /// The service URL.
-        /// </summary>
-        private readonly string _serviceApiUrl = ConfigurationManager.AppSettings["PortfolioManagerServiceUrl"];
-
-        private readonly HttpClient _httpClient;
+        private readonly IService service;
 
         /// <summary>
         /// Creates the service.
         /// </summary>
-        public PortfolioItemsService()
+        public PortfolioItemsService(IService service)
         {
-            _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            this.service = service;
         }
 
         /// <summary>
@@ -55,8 +34,7 @@ namespace PortfolioManagerClient.Services
         /// <returns>The list of portfolio items.</returns>
         public IList<PortfolioItemViewModel> GetItems(int userId)
         {
-            var dataAsString = _httpClient.GetStringAsync(string.Format(_serviceApiUrl + GetAllUrl, userId)).Result;
-            return JsonConvert.DeserializeObject<IList<PortfolioItemViewModel>>(dataAsString);
+            return service.GetAll().Select(item => item.ToViewModel()).ToList();
         }
 
         /// <summary>
@@ -65,8 +43,14 @@ namespace PortfolioManagerClient.Services
         /// <param name="item">The portfolio item to create.</param>
         public void CreateItem(PortfolioItemViewModel item)
         {
-            _httpClient.PostAsJsonAsync(_serviceApiUrl + CreateUrl, item)
-                .Result.EnsureSuccessStatusCode();
+            try
+            {
+                service.Add(item.ToBLLModel());
+            }
+            catch (Exception e)
+            {
+                //TODO add error handling
+            }
         }
 
         /// <summary>
@@ -75,8 +59,14 @@ namespace PortfolioManagerClient.Services
         /// <param name="item">The portfolio item to update.</param>
         public void UpdateItem(PortfolioItemViewModel item)
         {
-            _httpClient.PutAsJsonAsync(_serviceApiUrl + UpdateUrl, item)
-                .Result.EnsureSuccessStatusCode();
+            try
+            {
+                service.Update(item.ToBLLModel());
+            }
+            catch (Exception e)
+            {
+                //TODO add error handling
+            }
         }
 
         /// <summary>
@@ -85,8 +75,14 @@ namespace PortfolioManagerClient.Services
         /// <param name="id">The portfolio item Id to delete.</param>
         public void DeleteItem(int id)
         {
-            _httpClient.DeleteAsync(string.Format(_serviceApiUrl + DeleteUrl, id))
-                .Result.EnsureSuccessStatusCode();
+            try
+            {
+                service.Delete(id);
+            }
+            catch (Exception e)
+            {
+                //TODO add error handling
+            }
         }
     }
 }

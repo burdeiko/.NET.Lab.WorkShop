@@ -1,4 +1,4 @@
-﻿using LocalStorage;
+﻿using PortfolioManager.Service.Models;
 using PortfolioManagerClient.Models;
 using System;
 
@@ -6,20 +6,20 @@ namespace PortfolioManagerClient.Infrastructure
 {
     public static class Mapper
     {
-        public static PortfolioItemViewModel ToViewModel(this PortfolioItemDAL dalItem)
+        public static PortfolioItemViewModel ToViewModel(this PortfolioBllModel bllItem)
         {
             return new PortfolioItemViewModel()
             {
-                ItemId = dalItem.ItemId,
-                UserId = dalItem.UserId,
-                SharesNumber = dalItem.SharesNumber,
-                Symbol = dalItem.Symbol
+                ItemId = bllItem.ItemId,
+                UserId = bllItem.UserId,
+                SharesNumber = bllItem.SharesNumber,
+                Symbol = bllItem.Symbol
             };
         }
 
-        public static PortfolioItemDAL ToDALModel(this PortfolioItemViewModel vm)
+        public static PortfolioBllModel ToBLLModel(this PortfolioItemViewModel vm)
         {
-            return new PortfolioItemDAL()
+            return new PortfolioBllModel()
             {
                 ItemId = vm.ItemId,
                 UserId = vm.UserId,
